@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+/* Kør bakcned.py inden
+*/
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cyberpunk Drink Robot</title>
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: #00fff7;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    h1 {
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+
+    button {
+      background-color: #1a1a1a;
+      border: 2px solid #39ff14;
+      color: #39ff14;
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 30px;
+      text-shadow: 0 0 5px #39ff14;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff00ff;
+      border-color: #00fff7;
+      color: #0f0;
+      box-shadow: 0 0 20px #ff00ff;
+    }
+
+    #status {
+      margin-top: 50px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Cyberpunk Drink Robot</h1>
+
+  <button onclick="sendDrink('rom_og_cola')">Rom og Cola</button>
+  <button onclick="sendDrink('gin_hass')">Gin Hass</button>
+  <button onclick="sendDrink('brandbil')">Brandbil</button>
+
+  <div id="status"></div>
+
+  <script>
+    function sendDrink(drinkName) {
+      document.getElementById('status').innerText = "Sender " + drinkName + "...";
+
+      fetch('http://localhost:5000/run_drink', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({drink: drinkName})
+      })
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('status').innerText = data;
+      })
+      .catch(error => {
+        document.getElementById('status').innerText = "Fejl: " + error;
+      });
+    }
+  </script>
+
+</body>
+</html>
