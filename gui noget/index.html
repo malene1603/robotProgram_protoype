@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cyberpunk GUI</title>
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: #00fff7;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    h1 {
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+
+    button {
+      background-color: #1a1a1a;
+      border: 2px solid #39ff14;
+      color: #39ff14;
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 30px;
+      text-shadow: 0 0 5px #39ff14;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff00ff;
+      border-color: #00fff7;
+      color: #0f0;
+      box-shadow: 0 0 20px #ff00ff;
+    }
+
+    .popup {
+      display: none;
+      background-color: #0f0f0f;
+      border: 2px solid #ff00ff;
+      padding: 20px;
+      margin-top: 20px;
+      color: #00fff7;
+      text-shadow: 0 0 5px #00fff7;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to Cyberpunk</h1>
+  <button onclick="showPopup()">Open Window</button>
+
+  <div id="popup" class="popup">
+    <h2>Neon Window Activated!</h2>
+    <p>Enjoy the future...</p>
+  </div>
+
+  <script>
+    function showPopup() {
+      document.getElementById('popup').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
