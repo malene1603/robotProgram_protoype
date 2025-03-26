@@ -6,7 +6,8 @@ class DrinksProgrammer:
         self.program_map = {
             "rom_og_cola": "rom_og_cola.urp",
             "gin_hass": "gin_hass.urp",
-            "brandbil": "brandbil.urp"
+            "brandbil": "brandbil.urp",
+            "solstang": "solstang.urp"
         }
 
     def menu(self):

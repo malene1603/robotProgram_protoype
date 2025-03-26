@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Forside</title>
+    <link rel="stylesheet" href="../CSS/MixSelvStyle.css">
+    <link rel="stylesheet" href="../CSS/ButtonStyle.css">
+    <link rel="stylesheet" href="../CSS/MainStyle.css">
+</head>
+<body>
+    <div class="bg">
+        <div class="overlay">
+            <div class="NameContainer">
+                <label>STEP 1: Giv din drink et navn</label>
+                <input class="NameInput" type="text" id="drinkName" placeholder="Drink navn">
+            </div>
+            <div class="grid-container">
+                <!-- STEP 2 -->
+                <div class="SteepContainer">
+                    <label>STEP 2:<br>Vælg 2 cl. alkohol</label>
+                    <img class="Silhouette" id="step2-img" src="../Images/Silhouette.png">
+                    <button class="VælgButton" onclick="openModal('alcohol', 'step2-img')">Vælg</button>
+                </div>
+                <!-- STEP 3 -->
+                <div class="SteepContainer">
+                    <label>STEP 3:<br>Vælg 1 cl. sirup</label>
+                    <img class="Silhouette" id="step3-img" src="../Images/Silhouette.png">
+                    <button class="VælgButton" onclick="openModal('sirup', 'step3-img')">Vælg</button>
+                </div>
+                <!-- STEP 4 -->
+                <div class="SteepContainer">
+                    <label>STEP 4:<br>Vælg juice/sodavand</label>
+                    <img class="Silhouette" id="step4-img" src="../Images/Silhouette.png">
+                    <button class="VælgButton" onclick="openModal('juice', 'step4-img')">Vælg</button>
+                </div>
+                <!-- STEP 5 -->
+                <div class="SteepContainer">
+                    <label>STEP 5:<br>Vælg juice/sodavand</label>
+                    <img class="Silhouette" id="step5-img" src="../Images/Silhouette.png">
+                    <button class="VælgButton" onclick="openModal('juice', 'step5-img', true)">Vælg</button>
+                </div>
+            </div>
+            <div class="buttonContainer">
+                <button class="glow-button-orange buttons" onclick="window.location.href='index.html'">Tilbage</button>
+                <button class="glow-button-green buttons" onclick="startMixing()">Start</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Vinduet -->
+    <div id="selectionModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Vælg en ingrediens</h2>
+            <div class="modal-buttons" id="modalOptions">
+                <!-- Knapper til ingredienser tilføjes her dynamisk -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ingredientsList = {};
+        // Ingredienser opdelt efter kategori
+        const ingredients = {
+            alcohol: [
+                { name: "CUBA Vodka", image: "../Images/vodka.png" },
+                { name: "CUBA Apricot", image: "../Images/apricot.png" },
+                { name: "CUBA Caramel", image: "../Images/caramel.png" },
+                { name: "CUBA Strawberry", image: "../Images/strawberry.png" },
+                { name: "CUBA Orange", image: "../Images/orange.png" },
+                { name: "CUBA Dry Lemon", image: "../Images/drylemon.png" },
+                { name: "CUBA Kurant", image: "../Images/kurant.png" },
+                { name: "CUBA Passion", image: "../Images/passion.png" },
+                { name: "CUBA Raspberry", image: "../Images/raspberry.png" },
+                { name: "CUBA Pineapple", image: "../Images/pineapple.png" },
+                { name: "CUBA Mango", image: "../Images/mango.png" },
+                { name: "CUBA Watermelon", image: "../Images/watermelon.png" }
+            ],
+            sirup: [
+                { name: "BARMIX Lime Sirup", image: "../Images/lime.png" },
+                { name: "BARMIX Grenadine Sirup", image: "../Images/grenadine.png" },
+                { name: "BARMIX Curacao Sirup", image: "../Images/curacao.png" },
+                { name: "BARMIX Blackberry Sirup", image: "../Images/blackberry.png" },
+                { name: "BARMIX Sugar Cane Sirup", image: "../Images/sugarcane.png" },
+                { name: "BARMIX Strawberry Sirup", image: "../Images/strawberryS.png" },
+                { name: "BARMIX Rhubarb Sirup", image: "../Images/rhubarb.png" },
+                { name: "BARMIX Mango Sirup", image: "../Images/mangoS.png" }
+            ],
+            juice: [
+                { name: "Appelsinjuice", image: "../Images/appelsinjuice.png" },
+                { name: "Ananasjuice", image: "../Images/ananasjuice.png" },
+                { name: "Æblejuice", image: "../Images/aeblejuice.png" },
+                { name: "Mangojuice", image: "../Images/mangojuice.png" },
+                { name: "Ingefærjuice", image: "../Images/ingefaerjuice.png" },
+                { name: "Cola", image: "../Images/cola.png" },
+                { name: "Sprite", image: "../Images/sprite.png" },
+                { name: "Hindbærbrus", image: "../Images/hindbaerbrus.png" },
+                { name: "Grøn sport", image: "../Images/groensport.png" },
+                { name: "Fanta Appelsin", image: "../Images/fantaA.png" },
+                { name: "Fanta Lemon", image: "../Images/fantaL.png" },
+                { name: "Fanta Exotic", image: "../Images/fantaE.png" }
+            ]
+        };
+
+        let currentStepImg = "";
+
+        function openModal(type, imgId, allowNone = false) {
+        const modal = document.getElementById("selectionModal");
+        const modalOptions = document.getElementById("modalOptions");
+        const modalTitle = document.getElementById("modalTitle");
+
+        modalOptions.innerHTML = "";
+        modalTitle.innerText = "Vælg en ingrediens";
+        currentStepImg = imgId;
+
+        ingredients[type].forEach(ingredient => {
+            const btn = document.createElement("button");
+            btn.innerHTML = `<img src="${ingredient.image}" alt="${ingredient.name}" width="50"><br>${ingredient.name}`;
+            btn.onclick = () => selectIngredient(imgId, ingredient.image, ingredient.name);
+            modalOptions.appendChild(btn);
+        });
+
+        if (allowNone) {
+            const noneBtn = document.createElement("button");
+            noneBtn.innerText = "Ingen";
+            noneBtn.onclick = () => selectIngredient(imgId, "../Images/Silhouette.png", "Ingen");
+            modalOptions.appendChild(noneBtn);
+        }
+
+        modal.style.display = "flex";
+    }
+
+    function selectIngredient(stepId, imagePath, name) {
+        ingredientsList[stepId] = { name: name, image: imagePath };
+        document.getElementById(stepId).src = imagePath;
+        closeModal();
+    }
+
+    function closeModal() {
+        document.getElementById("selectionModal").style.display = "none";
+    }
+
+    function startMixing() {
+        const drinkName = document.getElementById("drinkName").value || "Min Drink";
+        sessionStorage.setItem("drinkName", drinkName);
+
+        let selectedIngredients = [];
+        for (const key in ingredientsList) {
+            selectedIngredients.push(ingredientsList[key].name);
+        }
+
+        sessionStorage.setItem("selectedDrinkIngredients", JSON.stringify(selectedIngredients));
+        console.log("Drink Navn:", drinkName);
+console.log("Valgte Ingredienser:", selectedIngredients);
+
+        window.location.href = "progress.html";
+    }
+
+    </script>
+</body>
+</html>
