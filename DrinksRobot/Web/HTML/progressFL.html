@@ -57,6 +57,28 @@ function sendDrink(drinkName) {
         console.error("Fejl:", error);
     });
 }
+
+function pollRobotStatus() {
+    fetch('http://localhost:5001/robot_status')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.running) {
+                console.log("Robot er færdig! Går til forsiden...");
+                window.location.href = "index.html";
+            } else {
+                console.log("Robot stadig i gang...");
+                setTimeout(pollRobotStatus, 3000); // Prøv igen om 3 sekunder
+            }
+        })
+        .catch(err => {
+            console.error("Fejl ved status-tjek:", err);
+            setTimeout(pollRobotStatus, 3000);
+        });
+}
+
+// Start polling efter 2 sekunder
+setTimeout(pollRobotStatus, 2000);
+
 </script>
 
 

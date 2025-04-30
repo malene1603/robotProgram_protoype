@@ -140,20 +140,38 @@
     }
 
     function startMixing() {
-        const drinkName = document.getElementById("drinkName").value || "Min Drink";
-        sessionStorage.setItem("drinkName", drinkName);
+    const drinkName = document.getElementById("drinkName").value || "Min Drink";
 
-        let selectedIngredients = [];
-        for (const key in ingredientsList) {
+    let selectedIngredients = [];
+    for (const key in ingredientsList) {
+        if (ingredientsList[key].name !== "Ingen") {
             selectedIngredients.push(ingredientsList[key].name);
         }
-
-        sessionStorage.setItem("selectedDrinkIngredients", JSON.stringify(selectedIngredients));
-        console.log("Drink Navn:", drinkName);
-console.log("Valgte Ingredienser:", selectedIngredients);
-
-        window.location.href = "progress.html";
     }
+
+    console.log("Drink Navn:", drinkName);
+    console.log("Valgte Ingredienser:", selectedIngredients);
+
+    sessionStorage.setItem("drinkName", drinkName);
+    sessionStorage.setItem("selectedIngredients", JSON.stringify(selectedIngredients));
+
+    // ⏩ Skift side først (giver hurtig visning)
+    window.location.href = "progressMix.html";
+
+    // 🔁 Kør robotkald i baggrunden
+    fetch('http://localhost:5001/run_drink', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            ingredients: selectedIngredients
+        })
+    })
+    .then(response => response.text())
+    .then(data => console.log("Robotkald OK:", data))
+    .catch(error => console.error('Fejl ved sending:', error));
+}
 
     </script>
 </body>
