@@ -1,16 +1,18 @@
 from RobotState import RobotState
 
+
+
 class DrinksProgrammer:
     def __init__(self, comms, script_queue):
         self.comms = comms
         self.script_queue = script_queue
         self.program_map = {
-            "CUBAVodka": "CUBAVodka.urp",
-            "LimeSirup": "LimeSirup.urp",
-            "Cola": "Cola.urp",
+            "CUBAVodka": "test1.urp",
+            "LimeSirup": "test2.urp",
+            "Cola": "test3.urp",
             "brandbil": "brandbil.urp",
             "rom_og_cola": "rom_og_cola.urp",
-            "gin_hass": "gin_hass.urp",
+
             "solstang": "solstang.urp"
         }
 
@@ -88,6 +90,8 @@ class DrinksProgrammer:
             print(f"Ukendt drink navn: {drink_name}")
 
     def mix_drink(self, ingredients):
+        RobotState.progress_done = 0
+        RobotState.progress_total = len(ingredients) * 2
         for ingredient in ingredients:
             mapped_name = self.name_mapping.get(ingredient, None)
             if mapped_name and mapped_name in self.program_map:

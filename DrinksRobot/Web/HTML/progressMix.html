@@ -17,11 +17,18 @@
       <ul id="ingredientList"></ul>
       <p id="stepInfo"></p>
     </div>
+      <div id="progressLabel">Hælder...</div>
+    <!-- Progressbar placeret til højre -->
+    <div class="progressWrapper">
+      <div id="progressBar"></div>
+    </div>
   </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  const totalScripts = (JSON.parse(sessionStorage.getItem("selectedIngredients") || "[]").length) * 2;
+
+  document.addEventListener("DOMContentLoaded", function () {
     const drinkName = sessionStorage.getItem("drinkName") || "Ukendt Drink";
     const ingredients = JSON.parse(sessionStorage.getItem("selectedIngredients") || "[]");
 
@@ -29,35 +36,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const ul = document.getElementById("ingredientList");
     ingredients.forEach((ingredient, index) => {
-        if (ingredient === "Ingen") return;
-        const li = document.createElement("li");
-        li.innerText = (index + 1) + ". " + ingredient;
-        ul.appendChild(li);
+      if (ingredient === "Ingen") return;
+      const li = document.createElement("li");
+      li.innerText = (index + 1) + ". " + ingredient;
+      ul.appendChild(li);
     });
 
     document.getElementById("stepInfo").innerText = `Der mixes ${ingredients.length} trin...`;
-});
 
-function pollRobotStatus() {
-    fetch('http://localhost:5001/robot_status')
-        .then(res => res.json())
-        .then(data => {
-            if (!data.running) {
-                console.log("Robot er færdig! Går til forsiden...");
-                window.location.href = "index.html";
-            } else {
-                console.log("Robot stadig i gang...");
-                setTimeout(pollRobotStatus, 3000); // Prøv igen om 3 sekunder
-            }
-        })
-        .catch(err => {
-            console.error("Fejl ved status-tjek:", err);
-            setTimeout(pollRobotStatus, 3000);
-        });
+    pollProgress();
+  });
+
+  function pollProgress() {
+    fetch('http://localhost:5001/robot_progress')
+      .then(res => res.json())
+      .then(data => {
+        const done = data.done || 0;
+        const percent = Math.min((done / totalScripts) * 100, 100);
+        document.getElementById("progressBar").style.width = percent + "%";
+
+        if (percent >= 100) {
+          setTimeout(() => window.location.href = "index.html", 1500);
+        } else {
+          setTimeout(pollProgress, 1500);
+        }
+      })
+      .catch(err => {
+        console.error("Fejl ved progress poll:", err);
+        setTimeout(pollProgress, 2000);
+      });
+  }
+
+  function updateProgramLabel() {
+  fetch('http://localhost:5001/current_program')
+    .then(res => res.json())
+    .then(data => {
+      if (data.program) {
+        const cleaned = data.program.replace(".urp", "");
+        document.getElementById("progressLabel").innerText = "Hælder " + cleaned;
+      }
+    })
+    .catch(err => {
+      console.error("Fejl ved hentning af programnavn:", err);
+    });
 }
 
-// Start polling efter 2 sekunder
-setTimeout(pollRobotStatus, 2000);
+// Start loop
+setInterval(updateProgramLabel, 3000);
 
 </script>
 </body>

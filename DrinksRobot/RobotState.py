@@ -7,3 +7,6 @@ Mvh. Jacob
 class RobotState:
     idle_counter = 0
     pause_script_active = False
+    progress_done = 0
+    progress_total = 1
+    current_program_name = ""

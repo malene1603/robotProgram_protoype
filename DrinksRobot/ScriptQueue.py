@@ -1,4 +1,5 @@
 import time
+from RobotState import RobotState
 
 class ScriptQueue:
     def __init__(self, robot_connection):
@@ -26,14 +27,20 @@ class ScriptQueue:
         # Bestem hvad vi sender
         if next_script.startswith('load '):
             program_name = next_script.split('load ')[1].strip()
+
+            RobotState.current_program_name = program_name
+
             self.robot_connection.load_program(program_name)
         elif next_script.strip() == 'play':
             self.robot_connection.play_program()
         else:
             print(f"Ukendt kommando: {next_script}")
 
+        RobotState.progress_done += 1
+
         print("Script sendt:", next_script)
         self.running = True
 
         time.sleep(0.5)
         self._process_next()
+

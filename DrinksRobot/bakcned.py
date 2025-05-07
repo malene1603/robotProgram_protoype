@@ -1,10 +1,13 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from ScriptQueue import ScriptQueue
 from DrinksProgrammer import DrinksProgrammer
 from RobotComms import RobotComms
+from RobotState import RobotState
 
+
+progress_counter = {"done": 0, "total": 1}
 app = Flask(__name__)
 CORS(app)
 
@@ -36,8 +39,24 @@ def run_drink():
 @app.route('/robot_status', methods=['GET'])
 def robot_status():
     is_running = robot_connection.is_program_running()
-    return {"running": is_running}, 200
+    return {
+        "running": is_running,
+        "progress": RobotState.progress_done,
+        "total": RobotState.progress_total,
+        "current_program": RobotState.current_program_name  # ← send med
+    }, 200
 
+@app.route('/robot_progress', methods=['GET'])
+def robot_progress():
+    return {
+        "done": RobotState.progress_done,
+        "total": RobotState.progress_total
+    }, 200
+
+@app.route('/current_program', methods=['GET'])
+def get_current_program():
+    name = RobotState.current_program_name
+    return jsonify({"program": name})
 
 
 if __name__ == '__main__':
