@@ -3,15 +3,17 @@ from RobotState import RobotState
 
 class ScriptQueue:
     def __init__(self, robot_connection):
-        self.robot_connection = robot_connection
-        self.queue = []
-        self.running = False
+        self.robot_connection = robot_connection #socket til robot
+        self.queue = [] # kø med scripts
+        self.running = False # angiver om kø er i gang
 
+    #når script tilføjes, starter scriptQueue automatisk processen, hvis den ikke er i gang
     def add_script(self, script_text):
         self.queue.append(script_text)
         if not self.running:
             self._process_next()
 
+    #Tjekker om der er flere script i kø. Hvis ikke stopper den.
     def _process_next(self):
         if not self.queue:
             self.running = False
@@ -24,7 +26,7 @@ class ScriptQueue:
 
         next_script = self.queue.pop(0)
 
-        # Bestem hvad vi sender
+        # Bestem hvad vi sender, tjekker om vi loader eller player, sender det via socket
         if next_script.startswith('load '):
             program_name = next_script.split('load ')[1].strip()
 
@@ -36,6 +38,7 @@ class ScriptQueue:
         else:
             print(f"Ukendt kommando: {next_script}")
 
+        #Den opdatere progress_done
         RobotState.progress_done += 1
 
         print("Script sendt:", next_script)

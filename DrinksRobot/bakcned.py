@@ -5,7 +5,8 @@ from ScriptQueue import ScriptQueue
 from DrinksProgrammer import DrinksProgrammer
 from RobotComms import RobotComms
 from RobotState import RobotState
-
+from PauseFisk import PauseFisk
+import threading
 
 progress_counter = {"done": 0, "total": 1}
 app = Flask(__name__)
@@ -15,6 +16,9 @@ CORS(app)
 robot_connection = RobotComms("192.168.0.101")
 script_queue = ScriptQueue(robot_connection)
 programmer = DrinksProgrammer(robot_connection, script_queue)
+idle_checker = PauseFisk(robot_connection)
+idle_thread = threading.Thread(target=idle_checker.monitor_idle, daemon=True)
+idle_thread.start()
 
 @app.route('/run_drink', methods=['POST'])
 def run_drink():

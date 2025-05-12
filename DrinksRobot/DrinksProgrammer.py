@@ -10,7 +10,7 @@ class DrinksProgrammer:
             "CUBAVodka": "test1.urp",
             "LimeSirup": "test2.urp",
             "Cola": "test3.urp",
-            "brandbil": "brandbil.urp",
+            "brandbil": "test1.urp",
             "rom_og_cola": "rom_og_cola.urp",
 
             "solstang": "solstang.urp"
@@ -54,28 +54,7 @@ class DrinksProgrammer:
 
         }
 
-    def menu(self):
-        while True:
-            print("\nVælg din drink:")
-            print("1 - Rom og Cola")
-            print("2 - Gin Hass")
-            print("3 - Brandbil")
-            print("4 - Exit")
 
-
-            choice = input("Indtast valg (1/2/3/4): ")
-
-            if choice == "1":
-                self.run_program("test1")
-            elif choice == "2":
-                self.run_program("test2")
-            elif choice == "3":
-                self.run_program("brandbil")
-            elif choice == "4":
-                print("Farvel!")
-                break
-            else:
-                print("Ugyldigt valg. Prøv igen.")
 
     def run_program(self, drink_name):
         if drink_name in self.program_map:
@@ -90,6 +69,8 @@ class DrinksProgrammer:
             print(f"Ukendt drink navn: {drink_name}")
 
     def mix_drink(self, ingredients):
+        RobotState.idle_counter = 0
+        RobotState.pause_script_active = False
         RobotState.progress_done = 0
         RobotState.progress_total = len(ingredients) * 2
         for ingredient in ingredients:

@@ -67,3 +67,19 @@ class RobotComms:
         except Exception as e:
             print(f"Fejl ved tjek af programState: {e}")
             return False
+
+    def is_program_running_name(self, expected_name):
+        """Tjekker om et specifikt program kører baseret på navnet."""
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(5)
+            s.connect((self.robotIP, self.DASHBOARD_PORT))
+            s.recv(1024)
+            s.sendall(b"programState\n")
+            response = s.recv(1024).decode('utf-8')
+            s.close()
+            print(f"ProgramState respons: {response.strip()}")
+            return expected_name.lower() in response.lower()
+        except Exception as e:
+            print(f"Fejl ved programState-navnetjek: {e}")
+            return False
