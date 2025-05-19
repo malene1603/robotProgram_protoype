@@ -1,10 +1,12 @@
 import time
+import random
 from RobotState import RobotState
 
 class PauseFisk:
     def __init__(self, comms):
         self.comms = comms
-        self.IDLE_LIMIT = 15
+        self.IDLE_LIMIT = 30
+        self.pause_programs = ["pause1.urp", "pause2.urp", "pause3.urp"]
 
     def monitor_idle(self):
 
@@ -21,8 +23,12 @@ class PauseFisk:
                     print(f"Inaktiv i {RobotState.idle_counter} sekunder...")
 
                     if RobotState.idle_counter >= self.IDLE_LIMIT:
-                        print("Idle tid overskredet. Loader pause program...")
-                        self.comms.load_and_run_program("pause.urp")
+                        # Vælg et tilfældigt pauseprogram
+                        chosen_program = random.choice(self.pause_programs)
+                        print(f"Idle tid overskredet. Kører: {chosen_program}")
+                        self.comms.load_and_run_program(chosen_program)
+
+
                         RobotState.pause_script_active = True
                         RobotState.idle_counter = 0
                         RobotState.pause_script_active = False
